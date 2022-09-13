@@ -23,6 +23,7 @@ class ProductControllerTest extends TestCase
             'slug'=>Str::slug($name),
             'price'=>$price = rand(10,100),
         ]);
+        \Log::info(1,[$response->getContent()]);
 
         $response->assertJsonStructure([
             'id','name','slug','price','created_at'
