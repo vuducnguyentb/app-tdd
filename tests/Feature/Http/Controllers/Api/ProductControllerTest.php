@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
+use Faker\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
@@ -15,15 +17,28 @@ class ProductControllerTest extends TestCase
      */
     public function can_create_a_product()
     {
-        //given
-            //user is authenticated
-        //when
+        $faker = Factory::create();
         $response = $this->json('POST','/api/products',[
-
+            'name'=>$name = $faker->company,
+            'slug'=>Str::slug($name),
+            'price'=>$price = rand(10,100),
         ]);
-            //post request create product
-        //then
-            //product exists
-        $response->assertStatus(201);
+
+        $response->assertJsonStructure([
+            'id','name','slug','price','created_at'
+        ])
+            ->assertJson([
+                'name'=>$name,
+                'slug'=>Str::slug($name),
+                'price'=>$price
+            ])
+            ->assertStatus(201);
+
+        #check db
+        $this->assertDatabaseHas('products',[
+           'name'=>$name,
+            'slug'=>Str::slug($name),
+           'price'=>$price
+        ]);
     }
 }
