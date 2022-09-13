@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::namespace('Api')->group(function(){
     Route::post('/products','ProductController@store');
+    Route::get('/products/{id}','ProductController@show');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
